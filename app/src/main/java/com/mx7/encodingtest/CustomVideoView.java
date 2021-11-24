@@ -1,5 +1,7 @@
 package com.mx7.encodingtest;
 
+import static com.mx7.encodingtest.MetadataUtils.*;
+
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +27,7 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.MediaController;
 
+import com.warnyul.android.widget.FastVideoView;
 import com.mx7.encodingtest.MetadataUtils;
 
 import java.io.IOException;
@@ -159,13 +162,13 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
     @Override
     public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
         super.onInitializeAccessibilityEvent(event);
-        event.setClassName(com.warnyul.android.widget.FastVideoView.class.getName());
+        event.setClassName(CustomVideoView.class.getName());
     }
 
     @Override
     public void onInitializeAccessibilityNodeInfo(AccessibilityNodeInfo info) {
         super.onInitializeAccessibilityNodeInfo(info);
-        info.setClassName(com.warnyul.android.widget.FastVideoView.class.getName());
+        info.setClassName(CustomVideoView.class.getName());
     }
 
     @Override
@@ -273,9 +276,8 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
     }
 
     public void setMediaController(MediaController controller) {
-
         if (mMediaController != null) {
-            mMediaController.show();
+            mMediaController.hide();
         }
         mMediaController = controller;
         attachMediaController();
@@ -307,8 +309,6 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
         public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
             mVideoWidth = mp.getVideoWidth();
             mVideoHeight = mp.getVideoHeight();
-
-            // TODO MediaController 커스터마이징
             if (mVideoWidth != 0 && mVideoHeight != 0) {
                 setFixedSize(mVideoWidth, mVideoHeight);
                 requestLayout();
@@ -316,16 +316,17 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
         }
     };
 
-    MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
+    final MediaPlayer.OnPreparedListener mPreparedListener = new MediaPlayer.OnPreparedListener() {
 
         @Override
         public void onPrepared(MediaPlayer mp) {
 
             // briefly show the mediacontroller
             mCurrentState = STATE_PREPARED;
+            // mCurrentState = STATE_PLAYING;
 
             // Get the capabilities of the player for this stream
-            MetadataUtils.init(mp);
+            init(mp);
 
             if (MetadataUtils.isInitialized()) {
                 mCanPause = !MetadataUtils.has(MetadataUtils.PAUSE_AVAILABLE)
@@ -386,7 +387,7 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
             mCurrentState = STATE_PLAYBACK_COMPLETED;
             mTargetState = STATE_PLAYBACK_COMPLETED;
             if (mMediaController != null) {
-                mMediaController.show();
+                mMediaController.hide();
             }
             if (mOnCompletionListener != null) {
                 mOnCompletionListener.onCompletion(mMediaPlayer);
@@ -411,7 +412,7 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
             mTargetState = STATE_ERROR;
 
             if (mMediaController != null) {
-                mMediaController.show();
+                mMediaController.hide();
             }
 
             if (mOnErrorListener != null) {
@@ -542,7 +543,7 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
             if (mMediaController != null) {
-                mMediaController.show();
+                mMediaController.hide();
             }
 
             release(true);
@@ -609,13 +610,13 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
                     mMediaController.show();
                 } else {
                     start();
-                    mMediaController.show();
+                    mMediaController.hide();
                 }
                 return true;
             } else if (keyCode == KeyEvent.KEYCODE_MEDIA_PLAY) {
                 if (!mMediaPlayer.isPlaying()) {
                     start();
-                    mMediaController.show();
+                    mMediaController.hide();
                 }
                 return true;
             } else if (keyCode == KeyEvent.KEYCODE_MEDIA_STOP
@@ -635,7 +636,7 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
 
     private void toggleMediaControlsVisibility() {
         if (mMediaController.isShowing()) {
-            mMediaController.show();
+            mMediaController.hide();
         } else {
             mMediaController.show();
         }
@@ -761,7 +762,7 @@ public class CustomVideoView extends TextureView implements MediaController.Medi
     private final SurfaceHolder mSurfaceHolder = new SurfaceHolder() {
 
         @Override
-        public void addCallback(SurfaceHolder.Callback callback) {
+        public void addCallback(Callback callback) {
         }
 
         @Override

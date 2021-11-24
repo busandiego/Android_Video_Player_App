@@ -43,14 +43,20 @@ class VideoActivity: AppCompatActivity(), View.OnClickListener {
                 registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
                         result: ActivityResult ->
 
-                    videoView.setMediaController(object: MediaController(this){
-                        override fun hide() {
-                            show()
+                    videoView.setMediaController(MediaController(this))
+                    videoView.setOnPreparedListener(object: MediaPlayer.OnPreparedListener {
+                        override fun onPrepared(mediaPlayer: MediaPlayer) {
+                            mediaPlayer.isLooping = true
+                            mediaPlayer.setVolume(0F, 0F)
+                            mediaPlayer.start()
                         }
+
                     })
                     videoView.setVideoPath(result.data?.data.toString())
-                    videoView.rotation = 90F
+                    // videoView.rotation = 90F
+                    // videoView.setstate
                     videoView.start()
+
             }
 
         /*

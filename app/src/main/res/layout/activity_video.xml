@@ -20,8 +20,8 @@
         android:id="@+id/next_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="Next Button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -38,7 +38,6 @@
         tools:srcCompat="@tools:sample/avatars"
         />
 -->
-
     <com.mx7.encodingtest.CustomVideoView
         android:id="@+id/playback_video"
         android:layout_width="match_parent"
@@ -48,7 +47,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/select_button" />
-
 
 <!--
     <com.warnyul.android.widget.FastVideoView
@@ -68,6 +66,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
         android:text="rotation 90"
         app:layout_constraintBottom_toTopOf="@+id/next_button"
         app:layout_constraintEnd_toEndOf="parent" />
