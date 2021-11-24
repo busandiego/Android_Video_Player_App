@@ -45,4 +45,7 @@ dependencies {
 
     implementation 'com.arthenica:mobile-ffmpeg-https-gpl:4.4'
     implementation 'org.florescu.android.rangeseekbar:rangeseekbar-library:0.3.0'
+
+    implementation 'com.warnyul.android.fast-video-view:fast-video-view:1.0.2'
+
 }

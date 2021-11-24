@@ -65,21 +65,14 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
 
-
         apiToMp4.setOnClickListener(new View.OnClickListener() {
-
 
             @Override
             public void onClick(View view) {
-
                 String externalStorageDirectory = Environment.getExternalStorageDirectory().getAbsolutePath();
                 Log.d(TAG, "onClick: >>>>>" + externalStorageDirectory);
                 Log.d(TAG, "onClick: >>>>>" + externalStorageDirectory + "/download");
-
                 String downLoadPath = externalStorageDirectory + "/Download";
-
-
-
 
                 // get the path of the video file created in the storage.
                 // String exe = "-i '" + downLoadPath + "/input.avi' -c:v libx264 -preset ultrafast -crf 51 " + downLoadPath + "/output_crf51.mp4";
@@ -102,7 +95,8 @@ public class MainActivity extends AppCompatActivity {
                             // play the result video in VideoView
 
                             // remove the progress dialog
-                            progressDialog.dismiss();
+                            //progressDialog.dismiss();
+
                             Log.i(Config.TAG, "Async command execution success.");
 
                         } else if (returnCode == RETURN_CODE_CANCEL) {
@@ -112,11 +106,8 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-
-
             }
         });
-
 
         // set up the onClickListeners
         cancel.setOnClickListener(new View.OnClickListener() {
@@ -151,10 +142,6 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Please upload video", Toast.LENGTH_SHORT).show();
             }
         });
-
-
-
-
 
         fast.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -289,8 +276,6 @@ public class MainActivity extends AppCompatActivity {
         // the "exe" string contains the command to process video.The details of command are discussed later in this post.
         // "video_url" is the url of video which you want to edit. You can get this url from intent by selecting any video from gallery.
         exe = "-y -i " + video_url + " -filter_complex [0:v]trim=0:" + startMs / 1000 + ",setpts=PTS-STARTPTS[v1];[0:v]trim=" + startMs / 1000 + ":" + endMs / 1000 + ",setpts=0.5*(PTS-STARTPTS)[v2];[0:v]trim=" + (endMs / 1000) + ",setpts=PTS-STARTPTS[v3];[0:a]atrim=0:" + (startMs / 1000) + ",asetpts=PTS-STARTPTS[a1];[0:a]atrim=" + (startMs / 1000) + ":" + (endMs / 1000) + ",asetpts=PTS-STARTPTS,atempo=2[a2];[0:a]atrim=" + (endMs / 1000) + ",asetpts=PTS-STARTPTS[a3];[v1][a1][v2][a2][v3][a3]concat=n=3:v=1:a=1 " + "-b:v 2097k -vcodec mpeg4 -crf 0 -preset superfast " + filePath;
-
-
 
         // Here, we have used he Async task to execute our query because
         // if we use the regular method the progress dialog
@@ -466,20 +451,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-   public void writeVideo(){
-        // api_to_mp4
-
-    }
-
-
-
-
-
-
-
-
-
 
     // This method returns the seconds in hh:mm:ss time format
     private String getTime(int seconds) {
