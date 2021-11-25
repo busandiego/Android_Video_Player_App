@@ -31,7 +31,6 @@ class VideoActivity : AppCompatActivity(), View.OnClickListener {
         val rotationButton = findViewById<Button>(R.id.rotation_button)
         val reverseLeftRightButton = findViewById<Button>(R.id.reverse_left_right_button)
         val reverseUpDownButton = findViewById<Button>(R.id.reverse_up_down_button)
-        // val playbackVideo = findViewById<FastVideoView>(R.id.playback_video)
 
         selectButton.setOnClickListener(this)
         nextButton.setOnClickListener(this)
@@ -49,6 +48,7 @@ class VideoActivity : AppCompatActivity(), View.OnClickListener {
                         mediaPlayer.start()
                     }
                 })
+                // TODO need to distinguish back and select video
                 videoView.setVideoPath(result.data?.data.toString())
                 videoView.start()
             }
