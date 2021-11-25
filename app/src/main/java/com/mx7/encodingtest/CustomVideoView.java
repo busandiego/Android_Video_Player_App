@@ -2,6 +2,7 @@ package com.mx7.encodingtest;
 
 import static com.mx7.encodingtest.MetadataUtils.*;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;

@@ -60,6 +60,25 @@
         app:layout_constraintTop_toBottomOf="@+id/select_button" />
 -->
 
+    <Button
+        android:id="@+id/reverse_up_down_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="up down reverse"
+        app:layout_constraintBottom_toTopOf="@+id/reverse_left_right_button"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/reverse_left_right_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="92dp"
+        android:text="left right\nreverse"
+        app:layout_constraintBottom_toTopOf="@+id/next_button"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <Button
         android:id="@+id/rotation_button"

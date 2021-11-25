@@ -1,29 +1,25 @@
 package com.mx7.encodingtest
 
 import android.content.Intent
+import android.graphics.Matrix
 import android.media.MediaPlayer
-import android.media.MediaPlayer.OnPreparedListener
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
 import android.util.Log
-import android.view.TextureView
 import android.view.View
 import android.widget.Button
 import android.widget.MediaController
-import android.widget.VideoView
 import androidx.activity.result.ActivityResult
-import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import com.warnyul.android.widget.FastVideoView
-import org.florescu.android.rangeseekbar.RangeSeekBar
-import org.florescu.android.rangeseekbar.RangeSeekBar.OnRangeSeekBarChangeListener
+import androidx.appcompat.app.AppCompatActivity
 
-class VideoActivity: AppCompatActivity(), View.OnClickListener {
+class VideoActivity : AppCompatActivity(), View.OnClickListener {
 
     private val TAG = "VideoActivity"
     private var resultLauncher: ActivityResultLauncher<Intent>? = null
+    private var isReversedLeft: Boolean = false
+    private var isReversedUp: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,85 +29,33 @@ class VideoActivity: AppCompatActivity(), View.OnClickListener {
         val nextButton = findViewById<Button>(R.id.next_button)
         val videoView = findViewById<CustomVideoView>(R.id.playback_video)
         val rotationButton = findViewById<Button>(R.id.rotation_button)
+        val reverseLeftRightButton = findViewById<Button>(R.id.reverse_left_right_button)
+        val reverseUpDownButton = findViewById<Button>(R.id.reverse_up_down_button)
         // val playbackVideo = findViewById<FastVideoView>(R.id.playback_video)
 
         selectButton.setOnClickListener(this)
         nextButton.setOnClickListener(this)
         rotationButton.setOnClickListener(this)
+        reverseLeftRightButton.setOnClickListener(this)
+        reverseUpDownButton.setOnClickListener(this)
 
         resultLauncher =
-                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                        result: ActivityResult ->
-
-                    videoView.setMediaController(MediaController(this))
-                    videoView.setOnPreparedListener(object: MediaPlayer.OnPreparedListener {
-                        override fun onPrepared(mediaPlayer: MediaPlayer) {
-                            mediaPlayer.isLooping = true
-                            mediaPlayer.setVolume(0F, 0F)
-                            mediaPlayer.start()
-                        }
-
-                    })
-                    videoView.setVideoPath(result.data?.data.toString())
-                    // videoView.rotation = 90F
-                    // videoView.setstate
-                    videoView.start()
-
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+                videoView.setMediaController(MediaController(this))
+                videoView.setOnPreparedListener(object : MediaPlayer.OnPreparedListener {
+                    override fun onPrepared(mediaPlayer: MediaPlayer) {
+                        mediaPlayer.isLooping = true
+                        mediaPlayer.setVolume(0F, 0F)
+                        mediaPlayer.start()
+                    }
+                })
+                videoView.setVideoPath(result.data?.data.toString())
+                videoView.start()
             }
-
-        /*
-        // set up the VideoView.
-        // We will be using VideoView to view our video
-        videoView.setOnPreparedListener { mp -> // get the duration of the video
-            val duration = mp.duration / 1000
-
-            // initially set the left TextView to "00:00:00"
-            tvLeft.setText("00:00:00")
-
-            // initially set the right Text-View to the video length
-            // the getTime() method returns a formatted string in hh:mm:ss
-            tvRight.setText(getTime(mp.duration / 1000))
-
-            // this will run he video in loop
-            // i.e. the video won't stop
-            // when it reaches its duration
-            mp.isLooping = true
-
-            // set up the initial values of rangeSeekbar
-            rangeSeekBar.setRangeValues(0, duration)
-            rangeSeekBar.setSelectedMinValue(0)
-            rangeSeekBar.setSelectedMaxValue(duration)
-            rangeSeekBar.setEnabled(true)
-            rangeSeekBar.setOnRangeSeekBarChangeListener(OnRangeSeekBarChangeListener<Any?> { bar, minValue, maxValue -> // we seek through the video when the user
-                // drags and adjusts the seekbar
-                videoView.seekTo(minValue as Int * 1000)
-
-                // changing the left and right TextView according to
-                // the minValue and maxValue
-                tvLeft.setText(getTime(bar.selectedMinValue as Int))
-                tvRight.setText(getTime(bar.selectedMaxValue as Int))
-            })
-
-            // this method changes the right TextView every 1 second
-            // as the video is being played
-            // It works same as a time counter we see in any Video Player
-            val handler = Handler()
-            handler.postDelayed(Runnable {
-                if (videoView.currentPosition >= rangeSeekBar.getSelectedMaxValue()
-                        .toInt() * 1000
-                ) videoView.seekTo(rangeSeekBar.getSelectedMinValue().toInt() * 1000)
-                handler.postDelayed(r, 1000)
-            }.also { r = it }, 1000)
-        }
-
-        videoView.setOnPreparedListener { mediaPlayer ->
-            val duration = mediaPlayer.duration / 100
-        }
-        */
     }
 
     override fun onClick(view: View) {
-        when(view.id){
+        when (view.id) {
             R.id.select_button -> {
                 // create an intent to retrieve the video
                 // file from the device storage
@@ -126,7 +70,7 @@ class VideoActivity: AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.next_button -> {
-                val intent = Intent(this@VideoActivity , MainActivity::class.java)
+                val intent = Intent(this@VideoActivity, MainActivity::class.java)
                 startActivity(intent)
             }
 
@@ -134,13 +78,55 @@ class VideoActivity: AppCompatActivity(), View.OnClickListener {
                 val videoView = findViewById<CustomVideoView>(R.id.playback_video)
                 Log.d(TAG, "rotation_button: >>>  ${videoView.rotation}")
                 // videoView.rotation = 90F
-                if(videoView.rotation == 360F){
+                if (videoView.rotation == 360F) {
                     videoView.rotation = 0F
                 } else {
                     videoView.rotation = videoView.rotation + 90F
                 }
                 Log.d(TAG, "rotation_button: >>>  ${videoView.rotation}")
             }
+
+            R.id.reverse_left_right_button -> {
+                reverseLeftRight(isReversedLeft)
+            }
+
+            R.id.reverse_up_down_button -> {
+                reverseUpDown(isReversedUp)
+            }
         }
     }
+
+    private fun reverseLeftRight(checkReversed: Boolean) {
+        val videoView = findViewById<CustomVideoView>(R.id.playback_video)
+        val matrix = Matrix()
+        isReversedLeft = if (checkReversed) {
+            matrix.setScale(1F, 1F)
+            videoView.setTransform(matrix)
+            false
+        } else {
+            matrix.setScale(-1F, 1F)
+            matrix.postTranslate(videoView.width.toFloat(), 0F)
+            videoView.setTransform(matrix)
+            true
+        }
+        videoView.start()
+    }
+
+    private fun reverseUpDown(checkReversed: Boolean) {
+        val videoView = findViewById<CustomVideoView>(R.id.playback_video)
+        val matrix = Matrix()
+        isReversedUp = if (checkReversed) {
+            matrix.setScale(1F, 1F)
+            videoView.setTransform(matrix)
+            false
+        } else {
+            matrix.setScale(1F, -1F)
+            matrix.postTranslate(0F, videoView.height.toFloat())
+            videoView.setTransform(matrix)
+            true
+        }
+        videoView.start()
+    }
+
+
 }
