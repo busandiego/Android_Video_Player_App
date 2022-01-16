@@ -34,7 +34,7 @@ import com.mx7.encodingtest.MetadataUtils;
 import java.io.IOException;
 import java.util.Map;
 
-public class CustomVideoView extends TextureView implements MediaController.MediaPlayerControl {
+public class CustomVideoView extends ZoomableTextureView implements MediaController.MediaPlayerControl {
 
     private static final String TAG = com.mx7.encodingtest.CustomVideoView.class.getSimpleName();
 
